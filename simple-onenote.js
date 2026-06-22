@@ -1,7 +1,7 @@
-import { Client } from '@microsoft/microsoft-graph-client';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fetch from 'node-fetch';
 
 // Get current directory
 const __filename = fileURLToPath(import.meta.url);
@@ -35,24 +35,27 @@ async function listNotebooks() {
       return;
     }
 
-    // Create Microsoft Graph client
-    const client = Client.init({
-      authProvider: (done) => {
-        done(null, accessToken);
+    // Get notebooks using direct HTTP request
+    console.log('Fetching notebooks...');
+    const response = await fetch('https://graph.microsoft.com/v1.0/me/onenote/notebooks', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
       }
     });
-
-    // Get notebooks
-    console.log('Fetching notebooks...');
-    const response = await client.api('/me/onenote/notebooks').get();
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
     
     console.log('\nYour OneNote Notebooks:');
     console.log('=======================');
     
-    if (response.value.length === 0) {
+    if (!data.value || data.value.length === 0) {
       console.log('No notebooks found.');
     } else {
-      response.value.forEach((notebook, index) => {
+      data.value.forEach((notebook, index) => {
         console.log(`${index + 1}. ${notebook.displayName}`);
       });
     }

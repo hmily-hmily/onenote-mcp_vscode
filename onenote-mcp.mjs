@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
-import { McpServer } from './typescript-sdk/dist/esm/server/mcp.js';
-import { Client } from '@microsoft/microsoft-graph-client';
-import { StdioServerTransport } from './typescript-sdk/dist/esm/server/stdio.js';
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -539,4 +538,4 @@ async function main() {
   }
 }
 
-main(); 
+main();
